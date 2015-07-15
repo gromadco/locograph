@@ -1,9 +1,10 @@
 body {
-  background-image: url('images/bg-1.jpg');
+  /* background-image: url('images/bg-1.jpg'); */
   background-size: cover;
   background-attachment: fixed;
   /* FIXME: Temp. workaround for vertical scrollbars */
   margin: 0;
+  background-color: #03A9F4;
 }
 
 body::before {
