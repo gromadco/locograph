@@ -51,10 +51,10 @@ def users():
     res = ""
     for user in q:
         res += "<strong>{}</strong><br/>".format(user.email)
+        res += "<ul>"
         for p in user.places:
-            res += "<ul>"
             res += '<li><a href="{}">{}</a></li>'.format(p, p)
-            res += "</ul>"
+        res += "</ul><br/>"
 
     return res
 
