@@ -555,3 +555,5 @@ body .demo-blog {
 .loco-txt {
   color: white;
 }
+
+.loco-txt h1 { font-family: 'Roboto', 'Helvetica', sans-serif; font-weight: 600; }
