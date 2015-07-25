@@ -53,7 +53,7 @@ def users():
         res += "<strong>{}</strong><br/>".format(user.email)
         res += "<ul>"
         for p in user.places:
-            res += '<li><a href="{}">{}</a></li>'.format(p, p)
+            res += '<li><a href="{}">{}</a></li>'.format(p.encode('utf8'), p.encode('utf8'))
         res += "</ul><br/>"
 
     return res
