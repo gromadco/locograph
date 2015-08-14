@@ -14,6 +14,27 @@ class User(db.Model):
     subscribed_at = db.DateTimeProperty()
 
 
+class Place(db.Model):
+    # user = db.ReferenceProperty(User)
+    link = db.StringProperty()
+    # img = db.StringProperty(indexed=False)
+    info = db.TextProperty(indexed=False)
+    added_at = db.DateTimeProperty(auto_now_add=True)
+
+
+class UserPlaces(db.Model):
+    user = db.ReferenceProperty(User, collection_name='user_memberships')
+    place = db.ReferenceProperty(Place, collection_name='place_memberships')
+
+
+class Update(db.Model):
+    place = db.ReferenceProperty(Place)
+    link = db.StringProperty()
+    # img = db.StringProperty(indexed=False)
+    info = db.TextProperty(indexed=False)
+    added_at = db.DateTimeProperty(auto_now_add=True)
+
+
 app = Flask(__name__)
 
 # Note: We don't need to call run() since our application is embedded within
@@ -57,6 +78,12 @@ def users():
         res += "</ul><br/>"
 
     return res
+
+
+@app.route('/about')
+def about(name=None):
+    """Return about.html. """
+    return render_template('about.html')
 
 
 @app.errorhandler(404)
