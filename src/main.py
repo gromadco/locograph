@@ -80,6 +80,43 @@ def users():
     return res
 
 
+@app.route('/places', methods=['GET', 'POST'])
+def places(name=None):
+
+    if request.method == 'POST':
+        # "http://relax.ru/"
+        # http://kinozal.tv/
+        # http://planetakino.ua/kharkov/ru/4dx/
+        # http://mistoclub.com/
+
+        # link = request.form.get('place{}'.format(i), None)
+        # link = "http://kinozal.tv/"
+        link = request.form.get('link', None)
+        if link:
+            qs = Place.all()
+            for place in qs:
+                if place.link == link:
+                    return "This place already exists!"
+            else:
+                p = Place()
+                p.link = link
+                p.put()
+
+                return "Ok!"
+    else:
+        qs = Place.all()
+
+        # response = "<ul>"
+        # for place in qs:
+        #     # response += "<strong>{0}</strong><br/>".format(place.link)
+        #     response += "<li><strong>{0}</strong></li>".format(place.link)
+        # response += "</ul>"
+        # return response
+
+        return render_template('places.html', places=qs)
+
+
+
 @app.route('/about')
 def about(name=None):
     """Return about.html. """
