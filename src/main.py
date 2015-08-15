@@ -121,6 +121,7 @@ def places(name=None):
                 return flask.jsonify(response)
     else:
         qs = Place.all()
+        qs.order('added_at')
 
         # response = "<ul>"
         # for place in qs:

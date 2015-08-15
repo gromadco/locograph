@@ -54,6 +54,8 @@
             <thead>
                 <th>ID</th>
                 <th>Link</th>
+                <th>Info</th>
+                <th>Created at</th>
             </thead>
             <tbody>
                 {% for p in places %}
@@ -61,6 +63,8 @@
                         <!--<td>{{ p.key() }}</td>-->
                         <td>#</td>
                         <td>{{ p.link }}</td>
+                        <td>{{ p.info }}</td>
+                        <td>{{ p.added_at }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
