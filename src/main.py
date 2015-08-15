@@ -85,14 +85,7 @@ def users():
 def places(name=None):
 
     if request.method == 'POST':
-        # "http://relax.ru/"
-        # http://kinozal.tv/
-        # http://planetakino.ua/kharkov/ru/4dx/
-        # http://mistoclub.com/
-
         # link = request.form.get('place{}'.format(i), None)
-        # link = "http://kinozal.tv/"
-
         # link = request.json('link', None)
         link = request.json['link']
         info = request.json['link']
