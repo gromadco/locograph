@@ -6,6 +6,7 @@ from flask import Flask, request
 from flask import render_template
 
 from google.appengine.ext import db
+import flask
 
 
 class User(db.Model):
@@ -91,18 +92,33 @@ def places(name=None):
 
         # link = request.form.get('place{}'.format(i), None)
         # link = "http://kinozal.tv/"
-        link = request.form.get('link', None)
+
+        # link = request.json('link', None)
+        link = request.json['link']
+        info = request.json['link']
+
         if link:
             qs = Place.all()
             for place in qs:
                 if place.link == link:
-                    return "This place already exists!"
+                    response = {
+                        'status': 1,
+                        'message': "This place already exists!"
+                    }
+                    print response
+                    return flask.jsonify(response)
             else:
                 p = Place()
                 p.link = link
+                p.info = info
                 p.put()
 
-                return "Ok!"
+                response = {
+                    'status': 0,
+                    'message': "Ok!"
+                }
+                print response
+                return flask.jsonify(response)
     else:
         qs = Place.all()
 
