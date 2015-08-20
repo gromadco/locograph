@@ -1,4 +1,4 @@
-"""`main` is the top level module for your Flask application."""
+"""`main` is the top level module for Flask application."""
 
 import datetime
 
@@ -16,23 +16,26 @@ class User(db.Model):
 
 
 class Place(db.Model):
-    # user = db.ReferenceProperty(User)
-    link = db.StringProperty()
-    # img = db.StringProperty(indexed=False)
+    title = db.StringProperty()
     info = db.TextProperty(indexed=False)
     added_at = db.DateTimeProperty(auto_now_add=True)
 
 
-class UserPlaces(db.Model):
+class UserPlace(db.Model):
     user = db.ReferenceProperty(User, collection_name='user_memberships')
     place = db.ReferenceProperty(Place, collection_name='place_memberships')
 
 
 class Update(db.Model):
     place = db.ReferenceProperty(Place)
-    link = db.StringProperty()
-    # img = db.StringProperty(indexed=False)
+    link = db.LinkProperty()
     info = db.TextProperty(indexed=False)
+    added_at = db.DateTimeProperty(auto_now_add=True)
+
+
+class PlaceLink(db.Model):
+    place = db.ReferenceProperty(Place)
+    link = db.LinkProperty()
     added_at = db.DateTimeProperty(auto_now_add=True)
 
 
@@ -124,7 +127,6 @@ def places(name=None):
         # return response
 
         return render_template('places.html', places=qs)
-
 
 
 @app.route('/about')
