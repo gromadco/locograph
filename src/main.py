@@ -6,7 +6,6 @@ from flask import Flask, request
 from flask import render_template
 
 from google.appengine.ext import db
-import flask
 
 
 class User(db.Model):
@@ -88,45 +87,27 @@ def users():
 def places(name=None):
 
     if request.method == 'POST':
-        # link = request.form.get('place{}'.format(i), None)
-        # link = request.json('link', None)
-        link = request.json['link']
-        info = request.json['link']
+        print request.form
+        title = request.form.get('place_title', '')
+        info = request.form.get('place_info', '')
+        if title:
+            p = Place()
+            p.title = title
+            p.info = info
+            p.put()
 
-        if link:
-            qs = Place.all()
-            for place in qs:
-                if place.link == link:
-                    response = {
-                        'status': 1,
-                        'message': "This place already exists!"
-                    }
-                    print response
-                    return flask.jsonify(response)
-            else:
-                p = Place()
-                p.link = link
-                p.info = info
-                p.put()
+    # for GET and POST
 
-                response = {
-                    'status': 0,
-                    'message': "Ok!"
-                }
-                print response
-                return flask.jsonify(response)
-    else:
-        qs = Place.all()
-        qs.order('added_at')
+    qs = Place.all()
+    qs.order('added_at')
 
-        # response = "<ul>"
-        # for place in qs:
-        #     # response += "<strong>{0}</strong><br/>".format(place.link)
-        #     response += "<li><strong>{0}</strong></li>".format(place.link)
-        # response += "</ul>"
-        # return response
+    return render_template('places.html', places=qs)
 
-        return render_template('places.html', places=qs)
+
+@app.route('/p/<int:place_id>', methods=['GET', 'POST'])
+def place_page(place_id=None):
+    p = Place.get_by_id(place_id)
+    return render_template('place.html', place=p)
 
 
 @app.route('/about')

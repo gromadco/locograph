@@ -3,108 +3,41 @@
   <title>Places</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </head>
-    <body>
-        <script type="text/javascript">
-        $(document).ready(function () {
-            $('#btn_save_new_place').click(function(){
+<body>
 
-                var place_link = $(this).parent().parent().find('#place_link').val();
-                var place_info = '';
+  <h1>Add Place</h1>
+  <form action="" method="POST">
+    <span>Title</span>
+    <input type="text" name="place_title" required>
+    <br/><br/>
+    <span>Info</span>
+    <textarea name="place_info" maxlength="500" rows="4" value=""></textarea>
+    <br/><br/>
+    <input type="submit" value="Add">
+  </form>
 
-                add_place(place_link);
+  <h1>Places</h1>
+  <table class="table table-hover">
+    <thead>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Info</th>
+      <th>Created at</th>
+    </thead>
+    <tbody>
+      {% for p in places %}
+      <tr>
+        <td>
+          <a href="/p/{{ p.key().id() }}">{{ p.key().id() }}</a>
+        </td>
+        <td>{{ p.title }}</td>
+        <td>{{ p.info }}</td>
+        <td>{{ p.added_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-            });
-
-            add_place = function(place_link, place_info)
-            {
-                $.ajax({
-                    url: '/places',
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType : 'application/json;charset=UTF-8',
-                    data: JSON.stringify({
-                        'link': place_link,
-                        'info': place_info
-                    }, null, '\t'),
-                    success: function(data) {
-                        var status = data['status'];
-                        var message = data['message'];
-                    }
-                });
-                if (status == 0)
-                {
-                    location.reload();
-                }else
-                {
-                    alert(message);
-                }
-            };
-        });
-        </script>
-
-        <div>&nbsp</div>
-        <div>
-            <button class="btn btn-primary btn_add" data-toggle="modal" data-target="#myModalForm">Add Place</button>
-        </div>
-        <table class="table table-hover">
-            <thead>
-                <th>ID</th>
-                <th>Link</th>
-                <th>Info</th>
-                <th>Created at</th>
-            </thead>
-            <tbody>
-                {% for p in places %}
-                    <tr>
-                        <!--<td>{{ p.key() }}</td>-->
-                        <td>#</td>
-                        <td>{{ p.link }}</td>
-                        <td>{{ p.info }}</td>
-                        <td>{{ p.added_at }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="modal fade place" id="myModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalFormLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title" id="myModalFormLabel">Add Place</h4>
-                    </div>
-                    <div class="modal-body">
-                        <span class="label label-default">Link</span>
-                        <input type="text" class="form-control" id="place_link" placeholder="Link …" required>
-                        <div>&nbsp</div>
-                        <span class="label label-default">Info</span>
-                        <textarea  class="form-control" id="place_info" maxlength="255" rows="4" value=""></textarea>
-                        <div>&nbsp</div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="btn_save_new_place">Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
-    <script>
-        Array.prototype.forEach.call(document.querySelectorAll('.mdl-card__media'), function(el) {
-          var link = el.querySelector('a');
-          if(!link) {
-            return;
-          }
-          var target = link.getAttribute('href');
-          if(!target) {
-            return;
-          }
-          el.addEventListener('click', function() {
-            location.href = target;
-          });
-        });
-    </script>
+</body>
 </html>
