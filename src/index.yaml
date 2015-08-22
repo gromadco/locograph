@@ -10,8 +10,20 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Update
+  properties:
+  - name: place
+  - name: added_at
+    direction: desc
+
 - kind: UserPlace
   properties:
   - name: place
   - name: user
+    direction: desc
+
+- kind: UserPlace
+  properties:
+  - name: user
+  - name: place
     direction: desc

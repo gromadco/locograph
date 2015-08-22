@@ -83,7 +83,7 @@ def users():
     q = User.all()
     res = ""
     for user in q:
-        res += "<strong>{}</strong><br/>".format(user.email)
+        res += '<strong><a href="/u/{}">{}</a></strong><br/>'.format(user.email.encode('utf8'), user.email.encode('utf8'))
         res += "<ul>"
         for p in user.places:
             res += '<li><a href="{}">{}</a></li>'.format(p.encode('utf8'), p.encode('utf8'))
@@ -179,6 +179,27 @@ def place_page(place_id=None):
     # print subscribers
 
     return render_template('place.html', place=p, subscribers=subscribers)
+
+
+@app.route('/u/<email>', methods=['GET', 'POST'])
+def user_updates_page(email=None):
+
+    if request.method == 'POST':
+        pass
+
+    u = User.gql("WHERE email = '{0}'".format(email)).get()
+    q = u.user_memberships.order('-place')
+
+    res = ""
+    for x in q:
+        res += "<strong>{}</strong><br/>".format(x.place.title)
+        res += "<ul>"
+        updates = x.place.place_updates
+        for pu in updates:
+            res += '<li><a href="{}">{}</a></li>'.format(pu.link.encode('utf8'), pu.link.encode('utf8'))
+        res += "</ul><br/>"
+
+    return res
 
 
 @app.route('/about')
