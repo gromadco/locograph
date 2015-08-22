@@ -134,7 +134,6 @@ def place_page(place_id=None):
         print request.form
 
         email = request.form.get('email', '')
-        print email
         if email not in [u.email for u in User.all()]:
             u = User(
                 email=email,
@@ -143,24 +142,27 @@ def place_page(place_id=None):
             print "email {0} was added".format(u.email)
         else:
             u = User.gql("WHERE email = '{0}'".format(email)).get()
-            print "Warning: email {0} already exists!".format(u.email)
+            print "email {0} already exists!".format(u.email)
 
         print u
         p = Place.get_by_id(place_id)
         print p
 
-        if u not in p.place_memberships.order('-user'):
+        if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
+            if u.user_memberships.count() >= 4:
+                return "This user has maximum subscribing"
+
             up = UserPlace(
                 user=u,
                 place=p
             )
             up.put()
         else:
-            print "Warning: This user already exists in subscribers!"
+            return "This user already exists in subscribers!"
 
     p = Place.get_by_id(place_id)
     subscribers = [su.user for su in p.place_memberships.order('-user')]
-    print subscribers
+    # print subscribers
 
     return render_template('place.html', place=p, subscribers=subscribers)
 
