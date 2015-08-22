@@ -175,10 +175,9 @@ def place_page(place_id=None):
             print u
 
     p = Place.get_by_id(place_id)
-    subscribers = [su.user for su in p.place_memberships.order('-user')]
-    # print subscribers
+    updates = [update for update in p.place_updates.order('-added_at')]
 
-    return render_template('place.html', place=p, subscribers=subscribers)
+    return render_template('place.html', place=p, updates=updates)
 
 
 @app.route('/about')

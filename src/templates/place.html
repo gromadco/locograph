@@ -10,22 +10,7 @@
   {{ place.info }}
   <br/><br/>
 
-  <h1>Subscribers</h1>
-    <ul>
-      {% for s in subscribers %}
-      <li>{{ s.email }}</li>
-      {% endfor %}
-    </ul>
-  <br/><br/>
-
-  <form action="" method="POST">
-    <span>Email</span>
-    <input type="text" name="email" required>
-    <input type="submit" value="Subscribe">
-  </form>
-  <br/><br/>
-
-  <h1>Updates</h1>
+  <h2>Updates</h2>
   <form action="" method="POST">
     <span>Link</span>
     <input type="text" name="update_link" required>
@@ -35,6 +20,23 @@
     <br/><br/>
     <input type="submit" value="Add">
   </form>
+
+  <ul>
+    {% for u in updates %}
+    <li>
+      <a href="{{ u.link }}">{{ u.info }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Subscribe</h2>
+
+  <form action="" method="POST">
+    <span>Email</span>
+    <input type="text" name="email" required>
+    <input type="submit" value="Subscribe">
+  </form>
+  <br/><br/>
 
 </body>
 </html>
