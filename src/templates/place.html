@@ -8,6 +8,27 @@
 
   <h1>{{ place.title }}</h1>
   {{ place.info }}
+  <br/><br/>
+
+  <h1>Subscribers</h1>
+  <table class="table table-hover">
+    <thead>
+      <th>Email</th>
+    </thead>
+    <tbody>
+      {% for s in sabscribers %}
+      <tr>
+        <td>{{ s.email }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <form action="" method="POST">
+    <span>Email</span>
+    <input type="text" name="email" required>
+    <input type="submit" value="Subscribe">
+  </form>
 
 </body>
 </html>

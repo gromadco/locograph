@@ -11,7 +11,10 @@ from google.appengine.ext import db
 class User(db.Model):
     email = db.EmailProperty(required=True)
     places = db.ListProperty(db.Link)
-    subscribed_at = db.DateTimeProperty()
+    subscribed_at = db.DateTimeProperty(auto_now_add=True)
+
+    def __repr__(self):
+        return '< User = %s >' % (self.email)
 
 
 class Place(db.Model):
@@ -19,10 +22,16 @@ class Place(db.Model):
     info = db.TextProperty(indexed=False)
     added_at = db.DateTimeProperty(auto_now_add=True)
 
+    def __repr__(self):
+        return '< Place = %s >' % (self.title)
+
 
 class UserPlace(db.Model):
-    user = db.ReferenceProperty(User, collection_name='user_memberships')
-    place = db.ReferenceProperty(Place, collection_name='place_memberships')
+    user = db.ReferenceProperty(User, required=True, collection_name='user_memberships')
+    place = db.ReferenceProperty(Place, required=True, collection_name='place_memberships')
+
+    def __repr__(self):
+        return '< User = %s, Place = %s >' % (self.user, self.place)
 
 
 class Update(db.Model):
@@ -83,6 +92,20 @@ def users():
     return res
 
 
+# @app.route('/users_and_places')
+# def users():
+#
+#     q = User.all()
+#     res = ""
+#     for x in q:
+#         res += "<strong>{}</strong><br/>".format(x.user_memberships.order('-place')[0])
+#         res += "<strong>{}</strong><br/>".format(x.place.title)
+#         res += "<ul>"
+#         res += "</ul><br/>"
+#
+#     return res
+
+
 @app.route('/places', methods=['GET', 'POST'])
 def places(name=None):
 
@@ -106,8 +129,56 @@ def places(name=None):
 
 @app.route('/p/<int:place_id>', methods=['GET', 'POST'])
 def place_page(place_id=None):
+
+    if request.method == 'POST':
+        print request.form
+
+        email = request.form.get('email', '')
+        print email
+        if email not in [u.email for u in User.all()]:
+            u = User(
+                email=email,
+                suscribed_at=datetime.datetime.now())
+            u.put()
+            print "email {0} was added".format(u.email)
+        else:
+            # users = User.all()
+
+            # user = User.gql("WHERE email = {0}".format(email)).get()
+            u = User.gql("WHERE email = '{0}'".format(email)).get()
+            print "email {0} already exists".format(u.email)
+
+            # u.filter("email =", email)
+            # result = u.get()
+
+            # u = User.query(User.email == email).get()
+
+            # for user in users:
+            #     if user.email == email:
+            #         u = user
+
+        print u
+        p = Place.get_by_id(place_id)
+        print p
+
+        up = UserPlace(
+            user=u,
+            place=p
+        )
+        up.put()
+
     p = Place.get_by_id(place_id)
-    return render_template('place.html', place=p)
+    print p.place_memberships.order('-user')[0]
+    up = UserPlace.all()
+
+    subscribers = []
+    for x in up:
+        print x
+        if x.place == p:
+            print(x.user)
+            subscribers.append(x.user.email)
+
+    return render_template('place.html', place=p, subscribers=subscribers)
 
 
 @app.route('/about')
