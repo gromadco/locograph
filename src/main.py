@@ -1,4 +1,4 @@
-"""`main` is the top level module for your Flask application."""
+"""`main` is the top level module for Flask application."""
 
 import datetime
 
@@ -11,7 +11,40 @@ from google.appengine.ext import db
 class User(db.Model):
     email = db.EmailProperty(required=True)
     places = db.ListProperty(db.Link)
-    subscribed_at = db.DateTimeProperty()
+    subscribed_at = db.DateTimeProperty(auto_now_add=True)
+
+    def __repr__(self):
+        return '< User = %s >' % (self.email)
+
+
+class Place(db.Model):
+    title = db.StringProperty()
+    info = db.TextProperty(indexed=False)
+    added_at = db.DateTimeProperty(auto_now_add=True)
+
+    def __repr__(self):
+        return '< Place = %s >' % (self.title)
+
+
+class UserPlace(db.Model):
+    user = db.ReferenceProperty(User, required=True, collection_name='user_memberships')
+    place = db.ReferenceProperty(Place, required=True, collection_name='place_memberships')
+
+    def __repr__(self):
+        return '< User = %s, Place = %s >' % (self.user, self.place)
+
+
+class Update(db.Model):
+    place = db.ReferenceProperty(Place, collection_name='place_updates')
+    link = db.LinkProperty()
+    info = db.TextProperty(indexed=False)
+    added_at = db.DateTimeProperty(auto_now_add=True)
+
+
+class PlaceLink(db.Model):
+    place = db.ReferenceProperty(Place)
+    link = db.LinkProperty()
+    added_at = db.DateTimeProperty(auto_now_add=True)
 
 
 app = Flask(__name__)
@@ -57,6 +90,100 @@ def users():
         res += "</ul><br/>"
 
     return res
+
+
+# @app.route('/users_and_places')
+# def users():
+#
+#     q = User.all()
+#     res = ""
+#     for x in q:
+#         res += "<strong>{}</strong><br/>".format(x.user_memberships.order('-place')[0])
+#         res += "<strong>{}</strong><br/>".format(x.place.title)
+#         res += "<ul>"
+#         res += "</ul><br/>"
+#
+#     return res
+
+
+@app.route('/places', methods=['GET', 'POST'])
+def places(name=None):
+
+    if request.method == 'POST':
+        print request.form
+        title = request.form.get('place_title', '')
+        info = request.form.get('place_info', '')
+        if title:
+            p = Place()
+            p.title = title
+            p.info = info
+            p.put()
+
+    # for GET and POST
+
+    qs = Place.all()
+    qs.order('added_at')
+
+    return render_template('places.html', places=qs)
+
+
+@app.route('/p/<int:place_id>', methods=['GET', 'POST'])
+def place_page(place_id=None):
+
+    if request.method == 'POST':
+        print request.form
+        p = Place.get_by_id(place_id)
+        print p
+
+        # for add subscriber form
+        if 'email' in request.form:
+            email = request.form.get('email', '')
+            if email not in [u.email for u in User.all()]:
+                u = User(
+                    email=email,
+                    suscribed_at=datetime.datetime.now())
+                u.put()
+                print "email {0} was added".format(u.email)
+            else:
+                u = User.gql("WHERE email = '{0}'".format(email)).get()
+                print "email {0} already exists!".format(u.email)
+
+            print u
+
+            if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
+                if u.user_memberships.count() >= 4:
+                    return "This user has maximum subscribing"
+
+                up = UserPlace(
+                    user=u,
+                    place=p
+                )
+                up.put()
+            else:
+                return "This user already exists in subscribers!"
+
+        # for add update form
+        elif 'update_link' in request.form and 'update_info' in request.form:
+            update_link = request.form.get('update_link', '')
+            update_info = request.form.get('update_info', '')
+            u = Update(
+                place=p,
+                link=update_link,
+                info=update_info
+            )
+            u.put()
+            print u
+
+    p = Place.get_by_id(place_id)
+    updates = [update for update in p.place_updates.order('-added_at')]
+
+    return render_template('place.html', place=p, updates=updates)
+
+
+@app.route('/about')
+def about(name=None):
+    """Return about.html. """
+    return render_template('about.html')
 
 
 @app.errorhandler(404)

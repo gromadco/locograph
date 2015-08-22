@@ -1,0 +1,42 @@
+<!doctype html>
+<head>
+  <title> Locograph - {{ place.title }}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <h1>{{ place.title }}</h1>
+  {{ place.info }}
+  <br/><br/>
+
+  <h2>Updates</h2>
+  <form action="" method="POST">
+    <span>Link</span>
+    <input type="text" name="update_link" required>
+    <br/><br/>
+    <span>Info</span>
+    <textarea name="update_info" maxlength="500" rows="4" value=""></textarea>
+    <br/><br/>
+    <input type="submit" value="Add">
+  </form>
+
+  <ul>
+    {% for u in updates %}
+    <li>
+      <a href="{{ u.link }}">{{ u.info }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Subscribe</h2>
+
+  <form action="" method="POST">
+    <span>Email</span>
+    <input type="text" name="email" required>
+    <input type="submit" value="Subscribe">
+  </form>
+  <br/><br/>
+
+</body>
+</html>

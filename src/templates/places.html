@@ -1,0 +1,43 @@
+<!doctype html>
+<head>
+  <title>Places</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+  <h1>Add Place</h1>
+  <form action="" method="POST">
+    <span>Title</span>
+    <input type="text" name="place_title" required>
+    <br/><br/>
+    <span>Info</span>
+    <textarea name="place_info" maxlength="500" rows="4" value=""></textarea>
+    <br/><br/>
+    <input type="submit" value="Add">
+  </form>
+
+  <h1>Places</h1>
+  <table class="table table-hover">
+    <thead>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Info</th>
+      <th>Created at</th>
+    </thead>
+    <tbody>
+      {% for p in places %}
+      <tr>
+        <td>
+          <a href="/p/{{ p.key().id() }}">{{ p.key().id() }}</a>
+        </td>
+        <td>{{ p.title }}</td>
+        <td>{{ p.info }}</td>
+        <td>{{ p.added_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>
