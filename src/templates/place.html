@@ -16,7 +16,7 @@
       <th>Email</th>
     </thead>
     <tbody>
-      {% for s in sabscribers %}
+      {% for s in subscribers %}
       <tr>
         <td>{{ s.email }}</td>
       </tr>
@@ -24,6 +24,7 @@
     </tbody>
   </table>
 
+  <br/><br/>
   <form action="" method="POST">
     <span>Email</span>
     <input type="text" name="email" required>

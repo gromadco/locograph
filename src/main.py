@@ -168,15 +168,8 @@ def place_page(place_id=None):
         up.put()
 
     p = Place.get_by_id(place_id)
-    print p.place_memberships.order('-user')[0]
-    up = UserPlace.all()
-
-    subscribers = []
-    for x in up:
-        print x
-        if x.place == p:
-            print(x.user)
-            subscribers.append(x.user.email)
+    subscribers = [su.user for su in p.place_memberships.order('-user')]
+    print subscribers
 
     return render_template('place.html', place=p, subscribers=subscribers)
 
