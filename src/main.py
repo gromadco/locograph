@@ -142,30 +142,21 @@ def place_page(place_id=None):
             u.put()
             print "email {0} was added".format(u.email)
         else:
-            # users = User.all()
-
-            # user = User.gql("WHERE email = {0}".format(email)).get()
             u = User.gql("WHERE email = '{0}'".format(email)).get()
-            print "email {0} already exists".format(u.email)
-
-            # u.filter("email =", email)
-            # result = u.get()
-
-            # u = User.query(User.email == email).get()
-
-            # for user in users:
-            #     if user.email == email:
-            #         u = user
+            print "Warning: email {0} already exists!".format(u.email)
 
         print u
         p = Place.get_by_id(place_id)
         print p
 
-        up = UserPlace(
-            user=u,
-            place=p
-        )
-        up.put()
+        if u not in p.place_memberships.order('-user'):
+            up = UserPlace(
+                user=u,
+                place=p
+            )
+            up.put()
+        else:
+            print "Warning: This user already exists in subscribers!"
 
     p = Place.get_by_id(place_id)
     subscribers = [su.user for su in p.place_memberships.order('-user')]

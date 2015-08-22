@@ -11,18 +11,11 @@
   <br/><br/>
 
   <h1>Subscribers</h1>
-  <table class="table table-hover">
-    <thead>
-      <th>Email</th>
-    </thead>
-    <tbody>
+    <ul>
       {% for s in subscribers %}
-      <tr>
-        <td>{{ s.email }}</td>
-      </tr>
+      <li>{{ s.email }}</li>
       {% endfor %}
-    </tbody>
-  </table>
+    </ul>
 
   <br/><br/>
   <form action="" method="POST">
