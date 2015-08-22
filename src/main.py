@@ -182,15 +182,14 @@ def user_updates_page(email=None):
     u = User.gql("WHERE email = '{0}'".format(email)).get()
     q = u.user_memberships.order('-place')
 
-    res = ""
+    res = u""
     for x in q:
-        res += "<strong>{}</strong><br/>".format(x.place.title)
-        res += "<ul>"
+        res += u"<strong>{}</strong><br/>".format(x.place.title)
+        res += u"<ul>"
         updates = x.place.place_updates
         for pu in updates:
-            res += '<li><a href="{}">{}</a></li>'.format(
-                pu.link.encode('utf8'), pu.link.encode('utf8'))
-        res += "</ul><br/>"
+            res += u'<li><a href="{}">{}</a></li>'.format(pu.link, pu.info)
+        res += u"</ul><br/>"
 
     return res
 
