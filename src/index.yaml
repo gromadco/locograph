@@ -21,3 +21,9 @@ indexes:
   - name: place
   - name: user
     direction: desc
+
+- kind: UserPlace
+  properties:
+  - name: user
+  - name: place
+    direction: desc
