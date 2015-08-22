@@ -35,7 +35,7 @@ class UserPlace(db.Model):
 
 
 class Update(db.Model):
-    place = db.ReferenceProperty(Place)
+    place = db.ReferenceProperty(Place, collection_name='place_updates')
     link = db.LinkProperty()
     info = db.TextProperty(indexed=False)
     added_at = db.DateTimeProperty(auto_now_add=True)
@@ -132,33 +132,47 @@ def place_page(place_id=None):
 
     if request.method == 'POST':
         print request.form
-
-        email = request.form.get('email', '')
-        if email not in [u.email for u in User.all()]:
-            u = User(
-                email=email,
-                suscribed_at=datetime.datetime.now())
-            u.put()
-            print "email {0} was added".format(u.email)
-        else:
-            u = User.gql("WHERE email = '{0}'".format(email)).get()
-            print "email {0} already exists!".format(u.email)
-
-        print u
         p = Place.get_by_id(place_id)
         print p
 
-        if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
-            if u.user_memberships.count() >= 4:
-                return "This user has maximum subscribing"
+        # for add subscriber form
+        if 'email' in request.form:
+            email = request.form.get('email', '')
+            if email not in [u.email for u in User.all()]:
+                u = User(
+                    email=email,
+                    suscribed_at=datetime.datetime.now())
+                u.put()
+                print "email {0} was added".format(u.email)
+            else:
+                u = User.gql("WHERE email = '{0}'".format(email)).get()
+                print "email {0} already exists!".format(u.email)
 
-            up = UserPlace(
-                user=u,
-                place=p
+            print u
+
+            if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
+                if u.user_memberships.count() >= 4:
+                    return "This user has maximum subscribing"
+
+                up = UserPlace(
+                    user=u,
+                    place=p
+                )
+                up.put()
+            else:
+                return "This user already exists in subscribers!"
+
+        # for add update form
+        elif 'update_link' in request.form and 'update_info' in request.form:
+            update_link = request.form.get('update_link', '')
+            update_info = request.form.get('update_info', '')
+            u = Update(
+                place=p,
+                link=update_link,
+                info=update_info
             )
-            up.put()
-        else:
-            return "This user already exists in subscribers!"
+            u.put()
+            print u
 
     p = Place.get_by_id(place_id)
     subscribers = [su.user for su in p.place_memberships.order('-user')]
