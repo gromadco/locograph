@@ -110,7 +110,6 @@ def users():
 def places(name=None):
 
     if request.method == 'POST':
-        print request.form
         title = request.form.get('place_title', '')
         info = request.form.get('place_info', '')
         if title:
@@ -131,9 +130,7 @@ def places(name=None):
 def place_page(place_id=None):
 
     if request.method == 'POST':
-        print request.form
         p = Place.get_by_id(place_id)
-        print p
 
         # for add subscriber form
         if 'email' in request.form:
@@ -143,12 +140,8 @@ def place_page(place_id=None):
                     email=email,
                     suscribed_at=datetime.datetime.now())
                 u.put()
-                print "email {0} was added".format(u.email)
             else:
                 u = User.gql("WHERE email = '{0}'".format(email)).get()
-                print "email {0} already exists!".format(u.email)
-
-            print u
 
             if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
                 if u.user_memberships.count() >= 4:
@@ -172,7 +165,6 @@ def place_page(place_id=None):
                 info=update_info
             )
             u.put()
-            print u
 
     p = Place.get_by_id(place_id)
     updates = [update for update in p.place_updates.order('-added_at')]
