@@ -83,7 +83,8 @@ def users():
     q = User.all()
     res = ""
     for user in q:
-        res += '<strong><a href="/u/{}">{}</a></strong><br/>'.format(user.email.encode('utf8'), user.email.encode('utf8'))
+        res += '<strong><a href="/u/{}">{}</a></strong><br/>'.format(
+            user.email.encode('utf8'), user.email.encode('utf8'))
         res += "<ul>"
         for p in user.places:
             res += '<li><a href="{}">{}</a></li>'.format(p.encode('utf8'), p.encode('utf8'))
@@ -196,7 +197,8 @@ def user_updates_page(email=None):
         res += "<ul>"
         updates = x.place.place_updates
         for pu in updates:
-            res += '<li><a href="{}">{}</a></li>'.format(pu.link.encode('utf8'), pu.link.encode('utf8'))
+            res += '<li><a href="{}">{}</a></li>'.format(
+                pu.link.encode('utf8'), pu.link.encode('utf8'))
         res += "</ul><br/>"
 
     return res
