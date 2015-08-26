@@ -92,7 +92,7 @@ html, body {
   color: inherit;
 }
 .mdl-demo .mdl-card__actions a {
-  color: red;
+  color: #ff9800;
   margin: 0;
 }
 .mdl-demo .mdl-card__actions a:hover,
@@ -250,4 +250,8 @@ html, body {
 }
 .mdl-demo .mdl-menu__container {
   z-index: 99;
+}
+
+.section-small {
+  height: 100%;
 }
