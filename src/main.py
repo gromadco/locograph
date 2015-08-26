@@ -84,27 +84,13 @@ def users():
     res = ""
     for user in q:
         res += '<strong><a href="/u/{}">{}</a></strong><br/>'.format(
-            user.email.encode('utf8'), user.email.encode('utf8'))
+            user.key().id(), user.email.encode('utf8'))
         res += "<ul>"
         for p in user.places:
             res += '<li><a href="{}">{}</a></li>'.format(p.encode('utf8'), p.encode('utf8'))
         res += "</ul><br/>"
 
     return res
-
-
-# @app.route('/users_and_places')
-# def users():
-#
-#     q = User.all()
-#     res = ""
-#     for x in q:
-#         res += "<strong>{}</strong><br/>".format(x.user_memberships.order('-place')[0])
-#         res += "<strong>{}</strong><br/>".format(x.place.title)
-#         res += "<ul>"
-#         res += "</ul><br/>"
-#
-#     return res
 
 
 @app.route('/places', methods=['GET', 'POST'])
@@ -173,13 +159,14 @@ def place_page(place_id=None):
     return render_template('place.html', place=p, updates=updates)
 
 
-@app.route('/u/<email>', methods=['GET', 'POST'])
-def user_updates_page(email=None):
+@app.route('/u/<int:user_id>', methods=['GET', 'POST'])
+def user_updates_page(user_id=None):
 
     if request.method == 'POST':
         pass
 
-    u = User.gql("WHERE email = '{0}'".format(email)).get()
+    # u = User.gql("WHERE email = '{0}'".format(email)).get()
+    u = User.get_by_id(user_id)
     q = u.user_memberships.order('-place')
 
     res = u""
