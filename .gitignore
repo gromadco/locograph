@@ -58,3 +58,6 @@ target/
 
 # project files
 src/lib
+
+.idea/
+.env/
