@@ -46,7 +46,7 @@ def users():
     res = ""
     for user in q:
         res += u'<strong><a href="/u/{}">{}</a></strong><br/>'.format(
-            user.email, user.email)
+            user.key().id(), user.email.encode('utf8'))
         res += "<ul>"
         for p in user.places:
             res += u'<li><a href="{}">{}</a></li>'.format(p, p)
@@ -123,13 +123,14 @@ def place_page(place_id=None):
     return render_template('place.html', place=p, updates=updates)
 
 
-@app.route('/u/<email>', methods=['GET', 'POST'])
-def user_updates_page(email=None):
+@app.route('/u/<int:user_id>', methods=['GET', 'POST'])
+def user_updates_page(user_id=None):
 
     if request.method == 'POST':
         pass
 
-    u = User.gql("WHERE email = '{0}'".format(email)).get()
+    # u = User.gql("WHERE email = '{0}'".format(email)).get()
+    u = User.get_by_id(user_id)
     q = u.user_memberships.order('-place')
 
     res = u""
