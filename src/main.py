@@ -5,46 +5,8 @@ import datetime
 from flask import Flask, request
 from flask import render_template
 
-from google.appengine.ext import db
-
-
-class User(db.Model):
-    email = db.EmailProperty(required=True)
-    places = db.ListProperty(db.Link)
-    subscribed_at = db.DateTimeProperty(auto_now_add=True)
-
-    def __repr__(self):
-        return '< User = %s >' % (self.email)
-
-
-class Place(db.Model):
-    title = db.StringProperty()
-    info = db.TextProperty(indexed=False)
-    added_at = db.DateTimeProperty(auto_now_add=True)
-
-    def __repr__(self):
-        return '< Place = %s >' % (self.title)
-
-
-class UserPlace(db.Model):
-    user = db.ReferenceProperty(User, required=True, collection_name='user_memberships')
-    place = db.ReferenceProperty(Place, required=True, collection_name='place_memberships')
-
-    def __repr__(self):
-        return '< User = %s, Place = %s >' % (self.user, self.place)
-
-
-class Update(db.Model):
-    place = db.ReferenceProperty(Place, collection_name='place_updates')
-    link = db.LinkProperty()
-    info = db.TextProperty(indexed=False)
-    added_at = db.DateTimeProperty(auto_now_add=True)
-
-
-class PlaceLink(db.Model):
-    place = db.ReferenceProperty(Place)
-    link = db.LinkProperty()
-    added_at = db.DateTimeProperty(auto_now_add=True)
+from models import (
+    Place, Update, User, UserPlace)
 
 
 app = Flask(__name__)
@@ -54,7 +16,7 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello(name=None):
+def main(name=None):
     """Return index.html. """
     return render_template('index.html')
 
@@ -62,15 +24,15 @@ def hello(name=None):
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
 
-    links = []
+    places_input = []
     for i in range(1, 5):
-        l = request.form.get('place{}'.format(i), None)
-        if l:
-            links.append(db.Link(l))
+        p = request.form.get('place{}'.format(i), None)
+        if p:
+            places_input.append(p)
 
     u = User(
         email=request.form['email'],
-        places=links)
+        places_input=places_input)
     u.suscribed_at = datetime.datetime.now()
     u.put()
 
@@ -83,28 +45,16 @@ def users():
     q = User.all()
     res = ""
     for user in q:
-        res += '<strong><a href="/u/{}">{}</a></strong><br/>'.format(
-            user.email.encode('utf8'), user.email.encode('utf8'))
+        res += u'<strong><a href="/u/{}">{}</a></strong><br/>'.format(
+            user.email, user.email)
         res += "<ul>"
         for p in user.places:
-            res += '<li><a href="{}">{}</a></li>'.format(p.encode('utf8'), p.encode('utf8'))
+            res += u'<li><a href="{}">{}</a></li>'.format(p, p)
+        for p in user.places_input:
+            res += u'<li>{}</li>'.format(p)
         res += "</ul><br/>"
 
     return res
-
-
-# @app.route('/users_and_places')
-# def users():
-#
-#     q = User.all()
-#     res = ""
-#     for x in q:
-#         res += "<strong>{}</strong><br/>".format(x.user_memberships.order('-place')[0])
-#         res += "<strong>{}</strong><br/>".format(x.place.title)
-#         res += "<ul>"
-#         res += "</ul><br/>"
-#
-#     return res
 
 
 @app.route('/places', methods=['GET', 'POST'])
