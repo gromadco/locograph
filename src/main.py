@@ -5,6 +5,7 @@ import datetime
 from flask import Flask, request
 from flask import render_template
 
+from decorators import admin_required
 from models import (
     Place, Update, User, UserPlace)
 
@@ -40,7 +41,8 @@ def subscribe():
 
 
 @app.route('/users')
-def users():
+@admin_required
+def users_view():
 
     q = User.all()
     res = ""
