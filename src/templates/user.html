@@ -13,6 +13,25 @@
     </li>
     {% endfor %}
   </ul>
+  <h2>Digests</h2>
+  <ul>
+    {% for d in digests %}
+    <li>
+      <a href="/d/{{ d.key().id() }}">{{ d.created_at }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <h2>Updates not in digest</h2>
+    {% for p in places %}
+    <h3>{{ p.title }}</h3>
+    <ul>
+      {% for u in updates[p.key().id()] %}
+      <li>
+        <a href="{{ u.link }}">{{ u.info }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
   <form action="/u/{{ user.key().id() }}/digest/create" method="POST">
     <input type="submit" value="Create digest">
   </form>

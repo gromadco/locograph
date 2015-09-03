@@ -55,18 +55,61 @@ def user_updates_page(user_id=None):
         last_digest = digests[-1]
     else:
         last_digest = None
+    updates = {}
+    for p in places:
+        place_updates = Update.all()
+        place_updates = place_updates.filter('place =', p)
+        place_updates = place_updates.order('-added_at')
+        if last_digest:
+            place_updates = place_updates.filter('added_at >', last_digest.created_at)
+        updates[p.key().id()] = list(place_updates.run(limit=10))
     return render_template(
         "user.html",
         user=user,
         places=places,
-        last_digest=last_digest
+        digests=digests,
+        last_digest=last_digest,
+        updates=updates
+    )
+
+
+@app.route('/d/<int:digest_id>', methods=['GET'])
+def digest_page(digest_id=None):
+    digest = Digest.get_by_id(digest_id)
+    user = digest.user
+    places = [x.place for x in user.places_subscribed.order('-place')]
+    updates = {}
+    for p in places:
+        place_updates = Update.all()
+        place_updates = place_updates.filter('place =', p)
+        place_updates = place_updates.order('-added_at')
+        place_updates = place_updates.filter('added_at <', digest.created_at)
+        if digest.previous_digest_at:
+            place_updates = place_updates.filter('added_at >', digest.previous_digest_at)
+        updates[p.key().id()] = list(place_updates.run(limit=10))
+    return render_template(
+        "digest.html",
+        user=user,
+        places=places,
+        digest=digest,
+        updates=updates
     )
 
 
 @app.route('/u/<int:user_id>/digest/create', methods=['POST'])
 @admin_required
 def user_create_digest(user_id=None):
-    print 'creating digest'
+    user = User.get_by_id(user_id)
+    last_digest = Digest.all().filter('user =', user).order('-created_at').fetch(1)
+    if last_digest:
+        last_digest = last_digest[0]
+    else:
+        last_digest = None
+    d = Digest(
+        user=user,
+        previous_digest_at=None if not last_digest else last_digest.created_at
+    )
+    d.save()
     return redirect('/u/{}'.format(user_id))
 
 
