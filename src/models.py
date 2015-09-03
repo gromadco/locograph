@@ -21,7 +21,7 @@ class Place(db.Model):
 
 
 class UserPlace(db.Model):
-    user = db.ReferenceProperty(User, required=True, collection_name='user_memberships')
+    user = db.ReferenceProperty(User, required=True, collection_name='places_subscribed')
     place = db.ReferenceProperty(Place, required=True, collection_name='place_memberships')
 
     def __repr__(self):
@@ -39,3 +39,9 @@ class PlaceLink(db.Model):
     place = db.ReferenceProperty(Place)
     link = db.LinkProperty()
     added_at = db.DateTimeProperty(auto_now_add=True)
+
+
+class Digest(db.Model):
+    user = db.ReferenceProperty(User, required=True)
+    created_at = db.DateTimeProperty(auto_now_add=True)
+    previous_digest_at = db.DateTimeProperty()

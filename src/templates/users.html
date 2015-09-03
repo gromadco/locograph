@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Locograph Users</title>
+</head>
+<body>
+    <ul>
+    {% for u in users %}
+      <li>
+        <a href="/u/{{ u.key().id() }}">{{ u.email }}</a>
+      </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

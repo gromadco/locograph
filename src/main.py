@@ -2,12 +2,11 @@
 
 import datetime
 
-from flask import Flask, request
-from flask import render_template
+from flask import Flask, redirect, render_template, request
 
 from decorators import admin_required
 from models import (
-    Place, Update, User, UserPlace)
+    Digest, Place, Update, User, UserPlace)
 
 
 app = Flask(__name__)
@@ -43,20 +42,32 @@ def subscribe():
 @app.route('/users')
 @admin_required
 def users_view():
+    return render_template("users.html", users=User.all())
 
-    q = User.all()
-    res = ""
-    for user in q:
-        res += u'<strong><a href="/u/{}">{}</a></strong><br/>'.format(
-            user.key().id(), user.email.encode('utf8'))
-        res += "<ul>"
-        for p in user.places:
-            res += u'<li><a href="{}">{}</a></li>'.format(p, p)
-        for p in user.places_input:
-            res += u'<li>{}</li>'.format(p)
-        res += "</ul><br/>"
 
-    return res
+@app.route('/u/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def user_updates_page(user_id=None):
+    user = User.get_by_id(user_id)
+    places = [x.place for x in user.places_subscribed.order('-place')]
+    digests = list(Digest.all().order('-created_at').run(limit=5))
+    if digests:
+        last_digest = digests[-1]
+    else:
+        last_digest = None
+    return render_template(
+        "user.html",
+        user=user,
+        places=places,
+        last_digest=last_digest
+    )
+
+
+@app.route('/u/<int:user_id>/digest/create', methods=['POST'])
+@admin_required
+def user_create_digest(user_id=None):
+    print 'creating digest'
+    return redirect('/u/{}'.format(user_id))
 
 
 @app.route('/places', methods=['GET', 'POST'])
@@ -71,8 +82,6 @@ def places(name=None):
             p.info = info
             p.put()
 
-    # for GET and POST
-
     qs = Place.all()
     qs.order('added_at')
 
@@ -81,7 +90,6 @@ def places(name=None):
 
 @app.route('/p/<int:place_id>', methods=['GET', 'POST'])
 def place_page(place_id=None):
-
     if request.method == 'POST':
         p = Place.get_by_id(place_id)
 
@@ -97,7 +105,7 @@ def place_page(place_id=None):
                 u = User.gql("WHERE email = '{0}'".format(email)).get()
 
             if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
-                if u.user_memberships.count() >= 4:
+                if u.places_subscribed.count() >= 4:
                     return "This user has maximum subscribing"
 
                 up = UserPlace(
@@ -123,28 +131,6 @@ def place_page(place_id=None):
     updates = [update for update in p.place_updates.order('-added_at')]
 
     return render_template('place.html', place=p, updates=updates)
-
-
-@app.route('/u/<int:user_id>', methods=['GET', 'POST'])
-def user_updates_page(user_id=None):
-
-    if request.method == 'POST':
-        pass
-
-    # u = User.gql("WHERE email = '{0}'".format(email)).get()
-    u = User.get_by_id(user_id)
-    q = u.user_memberships.order('-place')
-
-    res = u""
-    for x in q:
-        res += u"<strong>{}</strong><br/>".format(x.place.title)
-        res += u"<ul>"
-        updates = x.place.place_updates
-        for pu in updates:
-            res += u'<li><a href="{}">{}</a></li>'.format(pu.link, pu.info)
-        res += u"</ul><br/>"
-
-    return res
 
 
 @app.route('/about')
