@@ -3,6 +3,7 @@
 import datetime
 
 from flask import Flask, redirect, render_template, request
+from jinja2 import Markup
 
 from decorators import admin_required
 from models import (
@@ -192,3 +193,8 @@ def page_not_found(e):
 def application_error(e):
     """Return a custom 500 error."""
     return 'Sorry, unexpected error: {}'.format(e), 500
+
+
+@app.template_filter('format_update')
+def format_update_filter(u):
+    return Markup("""<a href="{}">{}</a>""".format(u.link, u.info))

@@ -38,7 +38,7 @@
     <ul>
       {% for u in updates[p.key().id()] %}
       <li>
-        <a href="{{ u.link }}">{{ u.info }}</a>
+        {{ u | format_update }}
       </li>
       {% endfor %}
     </ul>
