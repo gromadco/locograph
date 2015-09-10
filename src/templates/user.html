@@ -6,6 +6,17 @@
 </head>
 <body>
   <h1>{{ user.email }}</h1>
+  <h2>Places</h2>
+  <h3>Entered</h3>
+  <ul>
+    {% for p in user.places_input %}
+    <li> {{ p }} </li>
+    {% endfor %}
+    {% for p in user.places %}
+    <li> <a href="{{ p }}"> {{ p }} </a></li>
+    {% endfor %}
+  </ul>
+  <h3>Connected</h3>
   <ul>
     {% for p in places %}
     <li>
