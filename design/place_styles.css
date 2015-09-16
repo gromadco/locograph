@@ -255,3 +255,11 @@ html, body {
 .section-small {
   height: 100%;
 }
+
+.linkblock {cursor:pointer}
+
+.linkblock:hover {
+  
+  background-color: #ff9800;
+  color: white;
+}
