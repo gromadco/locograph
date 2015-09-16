@@ -177,6 +177,17 @@ def place_page(place_id=None):
     return render_template('place.html', place=p, updates=updates)
 
 
+@app.route('/update/<int:update_id>/delete', methods=['GET'])
+@admin_required
+def update_delete_page(update_id=None):
+    u = Update.get_by_id(update_id)
+    u.delete()
+    if request.referrer:
+        return redirect(request.referrer)
+    else:
+        return redirect('/')
+
+
 @app.route('/about')
 def about(name=None):
     """Return about.html. """
@@ -197,4 +208,8 @@ def application_error(e):
 
 @app.template_filter('format_update')
 def format_update_filter(u):
-    return Markup("""<a href="{}">{}</a>""".format(u.link, u.info))
+    return Markup(
+        """<a href="{}">{}</a> | <a href="/update/{}/delete">Delete</a> """.format(
+            u.link, u.info, u.key().id()
+        )
+    )
