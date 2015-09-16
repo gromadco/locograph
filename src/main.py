@@ -209,7 +209,7 @@ def application_error(e):
 @app.template_filter('format_update')
 def format_update_filter(u):
     return Markup(
-        """<a href="{}">{}</a> | <a href="/update/{}/delete">Delete</a> """.format(
+        u"""<a href="{}">{}</a> | <a href="/update/{}/delete">Delete</a> """.format(
             u.link, u.info, u.key().id()
         )
     )
