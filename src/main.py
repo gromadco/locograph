@@ -53,7 +53,7 @@ def user_updates_page(user_id=None):
     places = [x.place for x in user.places_subscribed.order('-place')]
     digests = list(Digest.all().filter('user =', user).order('-created_at').run(limit=5))
     if digests:
-        last_digest = digests[-1]
+        last_digest = digests[0]
     else:
         last_digest = None
     updates = {}
