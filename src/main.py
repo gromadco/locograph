@@ -148,17 +148,18 @@ def place_page(place_id=None):
             else:
                 u = User.gql("WHERE email = '{0}'".format(email)).get()
 
-            if u.email not in [pm.user.email for pm in p.place_memberships.order('-user')]:
+            up = UserPlace.all().filter(user=u, place=p).get()
+            
+            if up:
+                return "This user already exists in subscribers!"
+            else:
                 if u.places_subscribed.count() >= 4:
                     return "This user has maximum subscribing"
-
                 up = UserPlace(
                     user=u,
                     place=p
                 )
                 up.put()
-            else:
-                return "This user already exists in subscribers!"
 
         # for add update form
         elif 'update_link' in request.form and 'update_info' in request.form:
