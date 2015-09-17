@@ -148,7 +148,7 @@ def place_page(place_id=None):
             else:
                 u = User.gql("WHERE email = '{0}'".format(email)).get()
 
-            up = UserPlace.all().filter(user=u, place=p).get()
+            up = UserPlace.all().filter('user =', u).filter('place =', p).get()
             
             if up:
                 return "This user already exists in subscribers!"
