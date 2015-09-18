@@ -23,3 +23,9 @@
 	color: #ff9800;	
 }
 
+.box {
+	padding: 0 25px 0px 10px;
+	height: 62px;	
+	line-height: 64px;
+	text-align:center;
+}
