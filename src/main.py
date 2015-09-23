@@ -7,7 +7,7 @@ from jinja2 import Markup
 
 from decorators import admin_required
 from models import (
-    Digest, Place, Update, User, UserPlace)
+    Digest, Place, PlaceLink, Update, User, UserPlace)
 
 
 app = Flask(__name__)
@@ -172,10 +172,22 @@ def place_page(place_id=None):
             )
             u.put()
 
+        # for add link form
+        elif 'link_link' in request.form and 'link_description' in request.form:
+            link_link = request.form.get('link_link', '')
+            link_description = request.form.get('link_description', '')
+            l = PlaceLink(
+                place=p,
+                link=link_link,
+                description=link_description
+            )
+            l.put()
+
     p = Place.get_by_id(place_id)
     updates = [update for update in p.place_updates.order('-added_at')]
+    links = [link for link in p.placelink_set.order('-added_at')]
 
-    return render_template('place.html', place=p, updates=updates)
+    return render_template('place.html', place=p, updates=updates, links=links)
 
 
 @app.route('/update/<int:update_id>/delete', methods=['GET'])

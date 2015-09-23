@@ -10,6 +10,26 @@
   {{ place.info }}
   <br/><br/>
 
+  <h2>Links</h2>
+
+  <form action="" method="POST">
+    <span>Link</span>
+    <input type="text" name="link_link" required>
+    <br/><br/>
+    <span>Info</span>
+    <textarea name="link_description" maxlength="500" rows="4" value=""></textarea>
+    <br/><br/>
+    <input type="submit" value="Add">
+  </form>
+
+  <ul>
+    {% for l in links %}
+    <li>
+      <a href="{{ l.link }}">{{ l.description }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+
   <h2>Updates</h2>
   <form action="" method="POST">
     <span>Link</span>

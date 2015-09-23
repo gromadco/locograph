@@ -16,6 +16,12 @@ indexes:
   - name: created_at
     direction: desc
 
+- kind: PlaceLink
+  properties:
+  - name: place
+  - name: added_at
+    direction: desc
+
 - kind: Update
   properties:
   - name: place

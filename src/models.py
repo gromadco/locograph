@@ -38,6 +38,7 @@ class Update(db.Model):
 class PlaceLink(db.Model):
     place = db.ReferenceProperty(Place)
     link = db.LinkProperty()
+    description = db.TextProperty(indexed=False)
     added_at = db.DateTimeProperty(auto_now_add=True)
 
 
