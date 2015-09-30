@@ -1,0 +1,101 @@
+body {
+  background-color: #f2f2f2;
+}
+
+a {
+  color:#0288d1;
+  
+}
+
+a:hover {
+  color:#0288d1;
+  border-bottom:1px solid;
+}
+
+.color-top-bar {
+  background-color: #0288d1;  
+}
+
+.full-img-back {
+  background-color: #03a9f4;
+  width: auto;
+  height: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.title-place {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  color: white;
+  text-align: center;
+}
+
+.title-place h1{
+  color: white;
+  font-size: 2rem;
+}
+
+.title-news {  
+  color: white;
+  text-align: center;
+}
+
+.color-text-news {
+  color: #212121;
+}
+
+.place-form {
+  padding-bottom: 2em;
+}
+
+.place-form-button {  
+  margin-top: 1em;
+  text-align: center;
+}
+
+.place-form-radio-button {
+  color: #727272;
+  text-align: center;
+}
+
+.color-orange {
+  background-color: #ff9800;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.content-description {
+  
+}
+
+.content-description h3 {color:#212121;}
+.content-description p {color:#727272;}
+.content-description h6 {color:#727272;}
+
+
+.content-link ul{
+  margin-left: 0; /* Отступ слева в браузере IE и Opera */
+  padding-left: 0; /* Отступ слева в браузере Firefox, Safari, Chrome */
+}
+
+.content-link li{
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.panel {
+  height: 100%;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+
+.name-company {
+  margin-top: 1em;
+}
+
+.name-title {
+  padding:2em 2em 2em 2em;
+  text-align: center;
+}
