@@ -8,6 +8,7 @@ from jinja2 import Markup
 from decorators import admin_required
 from models import (
     Digest, Place, PlaceLink, Update, User, UserPlace)
+from google.appengine.api import mail
 
 
 app = Flask(__name__)
@@ -226,3 +227,28 @@ def format_update_filter(u):
             u.link, u.info, u.key().id()
         )
     )
+
+
+@app.route('/send_email')
+def mailing_helper():
+    # report = []
+    for u in User.all():
+        user_address = u.email
+
+        digests = list(Digest.all().filter('user =', u).order('-created_at').run(limit=5))
+        if digests:
+            last_digest = digests[0]
+
+            sender_address = "team@locograph.com"
+            subject = "Digest"
+            body = """Digest:
+
+www.locograph.com/d/{0}""".format(last_digest.key().id())
+
+            # """ need create report for response """
+            # report.append([user_address, body])
+
+            mail.send_mail(sender_address, user_address, subject, body)
+
+    return "Ok!"
+
